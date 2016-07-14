@@ -16,10 +16,39 @@ class NetAddress(object):
     __metaclass__ = abc.ABCMeta
     
     # Constructor stores each byte separately in an array
-    def __init__(self,octets):
-        self._octet = []
-        for octet in octets:
-            self._octet.append(octet)
+    def __init__(self, inputString):
+        self._octet = self._parseInputString( inputString )
+        
+    # Consumes the "inputString" parameter and turns it into a list of octets
+    #  for use with arithmetic functions. Implemented by child classes since
+    #  network addresses have variable formatting
+    @abc.abstractmethod
+    def _parseInputString( self, inputString ):
+        return
+    
+    # Splits the specified string "inputString" using delimeter "delim"
+    #  and expects to see a list of strings of length "numOctets". This
+    #  method includes built-in error checking for null references
+    #  and malformed network addresses. Child constructors can use this
+    #  to validate input before building the objects. Method returns
+    #  the list of substrings, assuming there are no errors.
+    def _splitInputString(self, inputString, delim, numOctets):
+        
+        # Test for a null reference; raise error
+        if( inputString is None ):
+            raise AttributeError( "inputString is None" )
+        
+        # Split the string into pieces based on    
+        stringOctets = inputString.split(delim)      
+            
+        # There should be exactly "numOctets" octets in the address
+        if( len( stringOctets ) != numOctets ):
+            raise ValueError( "Incorrect number of octets: " + 
+            str ( len( stringOctets ) ) )
+        
+        # Method success; return the list of substrings    
+        return stringOctets
+            
     
     # If a valid index, return the non-canonically referenced result
     def getOctet(self, octet):

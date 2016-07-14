@@ -14,7 +14,38 @@ from NetAddress import NetAddress
 
 # Defines an IPv4 address, inheriting from NetAddress
 class IPv4Address(NetAddress):
-
+    
+    # Implements the abstract method defined in NetAddress. Breaks a
+    #  dotted decimal IPv4 address into a list of 4 integers; this
+    #  list is returned from the method
+    def _parseInputString( self, inputString ):
+        
+        # Split the input string into 4 separate octets; any errors
+        #  raised by this method are passed up the recursion stack
+        ipStringOctets = self._splitInputString( inputString, ".", 4 )
+        
+        # Iterate over all of the substrings, which should be 
+        #  8-bit unsigned integers
+        integerOctets = []
+        for ipStringOctet in ipStringOctets:
+            
+            # Test for valid range 0 <= x <= 255
+            current = int( ipStringOctet )
+            if( current < 0 or current > 255 ):
+                # Range invalid; raise error
+                raise ValueError( "current out of range: " + current )
+            
+            # Range valid; add current to list    
+            integerOctets.append( current )
+            
+        # Final sanity check; there should be exactly 4 octets in the list
+        if( len( integerOctets ) != 4 ):
+            raise ValueError( "len( integerOctets ) is not 4:" + len( integerOctets ) )
+            
+        # Return the list of integer octets after parsing.
+        #  This typically will be returned to the parent's constructor
+        return integerOctets
+    
     # Return the IPv4 address in dotted-decimal format (xx.xx.xx.xx)
     def toString(self): 
         

@@ -24,12 +24,12 @@ class IPv4Address_Test( NetAddress_Test ):
     # Implements the abstract method defined in NetAddress_Test to add a pool
     #  of IPv4 addresses for testing.
     def populateNetAddressList(self):
-        self.getNetAddressList().append( IPv4Address( [1, 2, 3, 4] ) )
-        self.getNetAddressList().append( IPv4Address( [223, 20, 30, 40] ) )
-        self.getNetAddressList().append( IPv4Address( [224, 17, 34, 17] ) )
-        self.getNetAddressList().append( IPv4Address( [239, 7, 5, 16] ) )
-        self.getNetAddressList().append( IPv4Address( [240, 239, 238, 237] ) )
-        self.getNetAddressList().append( IPv4Address( [255, 54, 55, 56] ) )
+        self.getNetAddressList().append( IPv4Address( "1.2.3.4" ) )
+        self.getNetAddressList().append( IPv4Address( "223.20.30.40") )
+        self.getNetAddressList().append( IPv4Address( "224.17.24.17") )
+        self.getNetAddressList().append( IPv4Address( "239.7.5.16") )
+        self.getNetAddressList().append( IPv4Address( "240.239.238.237") )
+        self.getNetAddressList().append( IPv4Address( "255.54.55.56") )
     
     # Tests the isUnicast() function within the IPv4Address class.
     #  The method under test returns true if the IPv4 address is unicast.

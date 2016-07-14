@@ -25,11 +25,12 @@ class IPv6Address_Test( NetAddress_Test ):
     #  of IPv6 addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( 
-        IPv6Address([0x20,0x1,0xdb,0x8,0,0,0,0,0,0,0,0,0,0,0,1]) )
+        IPv6Address("2001:0db8:0000:0000:0000:0000:0000:0001") )
         self.getNetAddressList().append( 
-        IPv6Address([0xff,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]) )
+        IPv6Address("FF00:0000:0000:0000:0000:0000:0000:0001") )
         self.getNetAddressList().append( 
-        IPv6Address([0xff,0,0,0,0,0,0,0,0,0,0,0,0,0xa,0xb,0xc]) )
+        IPv6Address("FF00:0000:0000:0000:0000:000a:000b:000c") )
+        
         
     # Tests the isUnicast() function within the IPv6Address class.
     #  The method under test returns true if the IPv6 address is unicast.

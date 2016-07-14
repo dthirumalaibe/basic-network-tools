@@ -14,6 +14,37 @@ from NetAddress import NetAddress
 
 # Defines a MAC address, inheriting from NetAddress
 class MACAddress(NetAddress):
+    
+    # Implements the abstract method defined in NetAddress. Breaks an
+    #  EUI-formatted MAC address into a list of 6 integers; this
+    #  list is returned from the method      
+    def _parseInputString( self, inputString ):
+        
+        # Split the input string into 6 separate octets; any errors
+        #  raised by this method are passed up the recursion stack
+        ipStringOctets = self._splitInputString( inputString, ":", 6 )
+        
+        # Iterate over all of the substrings, which should be 
+        #  8-bit unsigned integers
+        integerOctets = []
+        for ipStringOctet in ipStringOctets:
+            
+            # Test for valid range 0 <= x <= 255
+            current = int( ipStringOctet, 16 )
+            if( current < 0 or current > 255 ):
+                # Range invalid; raise error
+                raise ValueError( "current out of range: " + current )
+            
+            # Range valid; add current to list    
+            integerOctets.append( current )
+            
+        # Final sanity check; there should be exactly 4 octets in the list
+        if( len( integerOctets ) != 6 ):
+            raise ValueError( "len( integerOctets ) is not 6:" + len( integerOctets ) )
+            
+        # Return the list of integer octets after parsing.
+        #  This typically will be returned to the parent's constructor
+        return integerOctets
 
     # Return the MAC address in EUI format (xx:xx:xx:xx:xx:xx)
     def toString(self): 

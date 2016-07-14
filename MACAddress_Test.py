@@ -25,10 +25,9 @@ class MACAddress_Test( NetAddress_Test ):
     #  of MAC addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( 
-        MACAddress([11,0x22,0x33,0x44,55,0x66]))
-        
+        MACAddress("0B:22:33:44:55:66"))   
         self.getNetAddressList().append( 
-        MACAddress([13,22,33,44,55,0xff]))
+        MACAddress("0D:22:33:44:55:FF"))
     
     # Tests the isUnicast() function within the MACAddress class.
     #  The method under test returns true if the MAC address is unicast.
