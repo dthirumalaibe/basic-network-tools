@@ -50,6 +50,12 @@ class NetAddress(object):
     @abc.abstractmethod
     def toString(self):
         return
+        
+    # Defines the action taken when this object is treated like a string.
+    #  In this case, invokes the abstract toString() method implemented
+    #  in the child classes.
+    def __str__(self):
+        return self.toString()
 
     # Test for unicast addressing; returns true if the address is unicast
     @abc.abstractmethod

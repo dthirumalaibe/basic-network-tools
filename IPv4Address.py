@@ -17,8 +17,27 @@ class IPv4Address(NetAddress):
 
     # Return the IPv4 address in dotted-decimal format (xx.xx.xx.xx)
     def toString(self): 
-        return "%d.%d.%d.%d" % (
-            self._octet[0], self._octet[1], self._octet[2], self._octet[3] )
+        
+        # Start with an empty string
+        ipString = ""
+        ipStringLen = len( self._octet )
+        
+        # Iterate over all of the octets
+        for i in range( 0, ipStringLen ):
+            
+            # Append the plain decimal octet to the main string
+            ipString += str( self._octet[i] )
+            
+            # Be sure to add the colon every time an octet is added
+            #  The only exception is not adding a trailing colon
+            if i < ( ipStringLen - 1):
+                ipString += "."
+        
+        return ipString
+        
+        # Legacy implementation
+        #return "%d.%d.%d.%d" % (
+        #    self._octet[0], self._octet[1], self._octet[2], self._octet[3] )
             
     # Return the IPv4 address in contiguous hexadecimal format 
     #  which includes the leading "0x" string (0xaabbccdd)

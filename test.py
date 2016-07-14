@@ -13,6 +13,7 @@ from IPv6Address_Test import IPv6Address_Test
 from MACAddress_Test import MACAddress_Test
 import unittest
 import sys
+import os
 
 # Responsible for creating test-related objects and executing test suites
 def test( args ):
@@ -36,10 +37,11 @@ def test( args ):
     testSuiteList = [
         IPv4Address_Test.buildTestSuite(),
         IPv6Address_Test.buildTestSuite(),
-        MACAddress_Test.buildTestSuite(), ]
+        MACAddress_Test.buildTestSuite() ]
     
     # Create test runner to execute each test suite in series with the proper
     #  level of verbosity
+
     testRunner = unittest.TextTestRunner( verbosity = testVerbosity )
     
     # Iterate over all of the test suites, run each one in series 

@@ -34,6 +34,31 @@ class MACAddress(NetAddress):
                 macString += ":"
         
         return macString
+        
+    # Return the MAC address in Cisco format (xxxx.xxxx.xxxx)
+    def toStringCisco(self): 
+        
+        # Start with an empty string
+        octetLength = len( self._octet )
+        macString = ""
+        
+        # Iterate over all of the octets
+        for i in range( 0, octetLength ):
+            
+            # Build the octet in "xx" format an append it to the main string
+            macString += str( hex( self._octet[i] )[2:].zfill(2) )
+            
+            # Be sure to add the period every other time an octet is added
+            #  The only exception is not adding a trailing period
+            if( i % 2 == 1 and ( i < octetLength - 1 ) ):
+                macString += "."
+                
+        return macString
+        
+    # Defines the action taken when this object is treated like a string.
+    #  In this case, invokes the toString() method    
+    def __str__(self):
+        return self.toString()
     
     # Return true if the seventh bit of the first byte is set
     def isULset(self):
