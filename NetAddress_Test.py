@@ -45,6 +45,13 @@ class NetAddress_Test(unittest.TestCase):
     @abc.abstractmethod
     def populateNetAddressList(self):
         return
+        
+    # Performs a general constructor test to ensure it can tolerate invalid
+    #  inputs by raising the proper errors. This is not specific to a method
+    #  offered by the class but is required to be implemented by the base class 
+    @abc.abstractmethod
+    def test_invalidInstances(self):
+        return
     
     # Class-wide method that builds a TestSuite by dynamically collecting
     #  all methods defined within the specified TestCase.    
@@ -73,3 +80,11 @@ class NetAddress_Test(unittest.TestCase):
                 else:
                     self.assertTrue( address.getOctet(i) >= 0 
                     and address.getOctet(i) <= 255 )
+
+    # Tests the geAddrLen() function within the IPv4Address class.
+    #  This test is common for all network addresses.
+    #  Simply retrieves the value and tests it for equality
+    #  against the internal addrLen variable
+    def test_getAddrLen(self):
+        for address in self.getNetAddressList():
+            self.assertTrue( address.getAddrLen() == address._addrLen )   

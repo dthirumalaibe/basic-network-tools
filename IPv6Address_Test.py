@@ -27,11 +27,68 @@ class IPv6Address_Test( NetAddress_Test ):
         self.getNetAddressList().append( 
         IPv6Address("2001:0db8:0000:0000:0000:0000:0000:0001") )
         self.getNetAddressList().append( 
-        IPv6Address("FF00:0000:0000:0000:0000:0000:0000:0001") )
+        IPv6Address("FF00:0000:0000:0000:0000:0000:0000:0001", 128) )
         self.getNetAddressList().append( 
-        IPv6Address("FF00:0000:0000:0000:0000:000a:000b:000c") )
+        IPv6Address("FF00:0000:0000:0000:0000:000a:000b:000c", 0) )
+        self.getNetAddressList().append( 
+        IPv6Address("2002:beef:cafe:0000:0000:0000:0000:0001") )
+        self.getNetAddressList().append( 
+        IPv6Address("FD00:0000:0000:0000:0000:0000:0000:0001") )
+        self.getNetAddressList().append( 
+        IPv6Address("FEAA:0000:0000:0000:0000:000a:000b:000c") )
         
+    # Performs a general constructor test to ensure it can tolerate invalid
+    #  inputs by raising the proper errors. This is not specific to a method
+    #  offered by the class but is required to be implemented by the base class 
+    def test_invalidInstances(self):
         
+        # Build tuples of invalid input strings and address lengths
+        bogusInputStrings = ( None, "", "clown", 
+        "2001:0db8:0000:0000:0000:0000:0000"
+        "2001:0db8:0000:0000:0000:0000:0000:"
+        "2001:0db8:0000:0000:0000:0000:0000:0000:FFFF",
+        "2001:0db8:0000:0000:0000:0000:0000:-1",
+        "2001:0db8:0000:0000:0000:0000:0000:GGGG" )
+        
+        bogusAddrLens = ( -1, 129 )
+        
+        # Iterate over the list of invalid input strings
+        for bogusInputString in bogusInputStrings:
+            try:
+                # Attempt to build the object
+                IPv6Address( bogusInputString )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ( AttributeError, ValueError ) as e:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
+        
+        # Iterate over the list of invalid address lengths      
+        for bogusAddrLen in bogusAddrLens:
+            try:
+                # Attempt to build the object
+                IPv6Address( "2001:0db8:0000:0000:0000:0000:0000:0000",
+                bogusAddrLen )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ValueError:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
+              
     # Tests the isUnicast() function within the IPv6Address class.
     #  The method under test returns true if the IPv6 address is unicast.
     def test_isUnicast(self):
@@ -41,14 +98,45 @@ class IPv6Address_Test( NetAddress_Test ):
             else:
                 self.assertFalse( ip.isUnicast() )
 
-    # Tests the isMulticast() function within the IPv4Address class
-    #  The method under test returns true if the IPv4 address is multicast.
+    # Tests the isMulticast() function within the IPv6Address class
+    #  The method under test returns true if the IPv6 address is multicast.
     def test_isMulticast(self):
         for ip in self.getNetAddressList():
             if( ip.getOctet(1) == 0xff ):
                 self.assertTrue( ip.isMulticast() )
             else:
                 self.assertFalse( ip.isMulticast() )
+                
+    # Tests the is6to4() function within the IPv6Address class
+    #  The method under test returns true if the IPv6 address begins
+    #  with 0x2002, which is reserved for 6to4 tunneling           
+    def test_is6to4(self):
+        for ip in self.getNetAddressList():
+            if ( ip.getOctet(1) == 0x20 and ip.getOctet(2) == 0x02 ):
+                self.assertTrue( ip.is6to4() )
+            else:
+                self.assertFalse (ip.is6to4() )
+   
+    # Tests the isLinkLocalAddress() function within the IPv6Address class
+    #  The method under test returns true if the IPv6 address begins
+    #  is within FE80::/10 (0xFE80 - 0xFEBF in the first 2 octets)   
+    def test_isLinkLocalAddress(self):
+        for ip in self.getNetAddressList():
+            if ( ip.getOctet(1) == 0xfe and 
+            ( ip.getOctet(2) >= 0x80 and ip.getOctet(2) <= 0xbf ) ):
+                self.assertTrue( ip.isLinkLocalAddress() )
+            else:
+                self.assertFalse( ip.isLinkLocalAddress() )
+     
+    # Tests the isUniqueLocalAddress() function within the IPv6Address class
+    #  The method under test returns true if the IPv6 address begins
+    #  is within FC00::/7 (0xFC or 0xFD in the first octet)                   
+    def test_isUniqueLocalAddress(self):
+        for ip in self.getNetAddressList():
+          if ( ip.getOctet(1) == 0xfc or ip.getOctet(1) == 0xfd ):
+              self.assertTrue( ip.isUniqueLocalAddress() )
+          else:
+              self.assertFalse ( ip.isUniqueLocalAddress() )     
     
     # Tests the toString() function within the IPv6Address class
     #  The method under test returns a string representation of the IPv6

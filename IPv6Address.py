@@ -14,6 +14,15 @@ from NetAddress import NetAddress
 
 # Defines an IPv6 address, inheriting from NetAddress
 class IPv6Address(NetAddress):
+    
+    # Invokes the parent constructor to build the network address, which
+    #  performs most of the heavy lifting. Performs upper-bound checking
+    #  on the address length to ensure it is not greater than 128. Note
+    #  that the parent constructor performs lower-bound checking already.
+    def __init__(self, inputString, addrLen = 128):
+        if ( addrLen > 128 ):
+            raise ValueError("addrLen is greater than 128: " + str( addrLen ) )
+        NetAddress.__init__(self, inputString, addrLen)
 
     # Implements the abstract method defined in NetAddress. Breaks a
     #  fully-extended EUI IPv6 address into a list of 16 integers; this
@@ -92,3 +101,18 @@ class IPv6Address(NetAddress):
     # Test for multicast addressing; returns true if the first octet is 0xFF  
     def isMulticast(self):
         return self._octet[0] == 0xff
+        
+    # Test for 6to4 tunneling; returns true if the first 2 octets are 0x2001
+    def is6to4(self):
+        return self._octet[0] == 0x20 and self._octet[1] == 0x02
+        
+    # Test for unique local addressing (ULA), used for intranets
+    #  Returns true if the first otet is 0xFEBF through 0xFEBF (FE80::/10)
+    def isLinkLocalAddress(self):
+        return ( self._octet[0] == 0xfe and 
+        self._octet[1] >= 0x80 and self._octet[1] <= 0xbf )
+        
+    # Test for link local addressing (LLA), used for link-level communications
+    #  Returns true if the first otet is 0xFC or 0xFD (FC00::/7)
+    def isUniqueLocalAddress(self):
+        return self._octet[0] == 0xfc or self._octet[0] == 0xfd

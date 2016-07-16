@@ -24,12 +24,59 @@ class IPv4Address_Test( NetAddress_Test ):
     # Implements the abstract method defined in NetAddress_Test to add a pool
     #  of IPv4 addresses for testing.
     def populateNetAddressList(self):
-        self.getNetAddressList().append( IPv4Address( "1.2.3.4" ) )
-        self.getNetAddressList().append( IPv4Address( "223.20.30.40") )
-        self.getNetAddressList().append( IPv4Address( "224.17.24.17") )
-        self.getNetAddressList().append( IPv4Address( "239.7.5.16") )
-        self.getNetAddressList().append( IPv4Address( "240.239.238.237") )
-        self.getNetAddressList().append( IPv4Address( "255.54.55.56") )
+        self.getNetAddressList().append( IPv4Address( "1.2.3.4", 32 ) )
+        self.getNetAddressList().append( IPv4Address( "223.20.30.40", 0) )
+        self.getNetAddressList().append( IPv4Address( "224.17.24.17", 10 ) )
+        self.getNetAddressList().append( IPv4Address( "239.7.5.16" ) )
+        self.getNetAddressList().append( IPv4Address( "240.239.238.237", 1 ) )
+        self.getNetAddressList().append( IPv4Address( "255.54.55.56", 31 ) )
+    
+    # Performs a general constructor test to ensure it can tolerate invalid
+    #  inputs by raising the proper errors. This is not specific to a method
+    #  offered by the class but is required to be implemented by the base class 
+    def test_invalidInstances(self):
+        
+        # Build tuples of invalid input strings and address lengths
+        bogusInputStrings = ( None, "", "clown", "1", "1.2", 
+        "1.2.3", "1.2.3.", "1.2.3.256", "1.2.-3.0" )
+        
+        bogusAddrLens = ( -1, 33 )
+        
+        # Iterate over the list of invalid input strings
+        for bogusInputString in bogusInputStrings:
+            try:
+                # Attempt to build the object
+                IPv4Address( bogusInputString )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ( AttributeError, ValueError ) as e:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
+        
+        # Iterate over the list of invalid address lengths      
+        for bogusAddrLen in bogusAddrLens:
+            try:
+                # Attempt to build the object
+                IPv4Address( "1.2.3.4", bogusAddrLen )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ValueError:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
     
     # Tests the isUnicast() function within the IPv4Address class.
     #  The method under test returns true if the IPv4 address is unicast.

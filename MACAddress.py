@@ -15,6 +15,18 @@ from NetAddress import NetAddress
 # Defines a MAC address, inheriting from NetAddress
 class MACAddress(NetAddress):
     
+    # Invokes the parent constructor to build the network address, which
+    #  performs most of the heavy lifting. Performs upper-bound checking
+    #  on the address length to ensure it is not greater than 48. Note
+    #  that the parent constructor performs lower-bound checking already.
+    #  MAC addresses typically don't have "address lengths", but by
+    #  inheritance, it is supported anyway.
+    def __init__(self, inputString, addrLen = 48):
+        if ( addrLen > 48 ):
+            raise ValueError("addrLen is greater than 48: " + str( addrLen ) )
+            
+        NetAddress.__init__(self, inputString, addrLen)
+    
     # Implements the abstract method defined in NetAddress. Breaks an
     #  EUI-formatted MAC address into a list of 6 integers; this
     #  list is returned from the method      
@@ -33,14 +45,15 @@ class MACAddress(NetAddress):
             current = int( ipStringOctet, 16 )
             if( current < 0 or current > 255 ):
                 # Range invalid; raise error
-                raise ValueError( "current out of range: " + current )
+                raise ValueError( "current out of range: " + str( current ) )
             
             # Range valid; add current to list    
             integerOctets.append( current )
             
         # Final sanity check; there should be exactly 4 octets in the list
         if( len( integerOctets ) != 6 ):
-            raise ValueError( "len( integerOctets ) is not 6:" + len( integerOctets ) )
+            raise ValueError( "len( integerOctets ) is not 6:" + 
+            str( len( integerOctets )  ) )
             
         # Return the list of integer octets after parsing.
         #  This typically will be returned to the parent's constructor

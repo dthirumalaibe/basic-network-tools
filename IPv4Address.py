@@ -15,6 +15,15 @@ from NetAddress import NetAddress
 # Defines an IPv4 address, inheriting from NetAddress
 class IPv4Address(NetAddress):
     
+    # Invokes the parent constructor to build the network address, which
+    #  performs most of the heavy lifting. Performs upper-bound checking
+    #  on the address length to ensure it is not greater than 32. Note
+    #  that the parent constructor performs lower-bound checking already.
+    def __init__(self, inputString, addrLen = 32):
+        if ( addrLen > 32 ):
+            raise ValueError("addrLen is greater than 32: " + str( addrLen ) )
+        NetAddress.__init__(self, inputString, addrLen)
+    
     # Implements the abstract method defined in NetAddress. Breaks a
     #  dotted decimal IPv4 address into a list of 4 integers; this
     #  list is returned from the method
@@ -33,14 +42,15 @@ class IPv4Address(NetAddress):
             current = int( ipStringOctet )
             if( current < 0 or current > 255 ):
                 # Range invalid; raise error
-                raise ValueError( "current out of range: " + current )
+                raise ValueError( "current out of range: " + str( current ) )
             
             # Range valid; add current to list    
             integerOctets.append( current )
             
         # Final sanity check; there should be exactly 4 octets in the list
         if( len( integerOctets ) != 4 ):
-            raise ValueError( "len( integerOctets ) is not 4:" + len( integerOctets ) )
+            raise ValueError( "len( integerOctets ) is not 4:" + 
+            str( len( integerOctets ) ) )
             
         # Return the list of integer octets after parsing.
         #  This typically will be returned to the parent's constructor
@@ -91,3 +101,44 @@ class IPv4Address(NetAddress):
     # Test for Class E addressing    
     def isExperimental(self):
         return ( self._octet[0] > 239 )
+    
+    # Test for link local addressing (LLA), used for link-level communications
+    #  Returns true if the address begins with 169.254.0.0 for unicast
+    #  or 224.0.0.x for multicast
+    def isLinkLocalAddress(self):
+         
+        if( self._octet[0] == 169 and self._octet[1] == 254 ):
+            return True
+            
+        elif( self._octet[0] == 224 and self._octet[1] == 0 
+        and self._octet[2] == 0 ):
+            return True
+            
+        return False
+    
+    # Tests for private addressing defined in RFC 1918. Also tests for
+    #  administratively-scoped multicast addressing. Private addresses:
+    #  10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 239.0.0.0/8    
+    def isPrivateAddress(self):
+        
+        # Test for 10.x.x.x
+        if( self._octet[0] == 10):
+            return True
+        
+        # Test for 172.16.x.x - 172.31.x.x
+        elif( self._octet[0] == 172 and 
+        (self._octet[1] >= 16 and self._octet[1] <= 31) ):
+            return True
+        
+        # Test for 192.168.x.x
+        elif( self._octet[0] == 192 and self._octet[1] >= 168 ):
+            return True
+            
+        # Test for 239.x.x.x (multicast admin range)
+        elif( self._octet[0] == 239 ):
+            return True
+        
+        # All tests were false; address is not private
+        return False
+        
+        

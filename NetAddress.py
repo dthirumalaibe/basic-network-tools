@@ -15,9 +15,14 @@ import abc
 class NetAddress(object):
     __metaclass__ = abc.ABCMeta
     
-    # Constructor stores each byte separately in an array
-    def __init__(self, inputString):
+    # Constructor stores each byte separately in an array after parsing the
+    #  input string according to a child-defined method. Perform lower-bound
+    #  error-checking on the address length to ensure it is non-negative.
+    def __init__(self, inputString, addrLen):
         self._octet = self._parseInputString( inputString )
+        if ( addrLen < 0 ):
+            raise ValueError("addrLen is negative: " + str( addrLen ) )
+        self._addrLen = addrLen
         
     # Consumes the "inputString" parameter and turns it into a list of octets
     #  for use with arithmetic functions. Implemented by child classes since
@@ -35,11 +40,11 @@ class NetAddress(object):
     def _splitInputString(self, inputString, delim, numOctets):
         
         # Test for a null reference; raise error
-        if( inputString is None ):
-            raise AttributeError( "inputString is None" )
+        if( inputString is None or len( inputString ) == 0 ):
+            raise AttributeError( "inputString is None or empty" )
         
         # Split the string into pieces based on    
-        stringOctets = inputString.split(delim)      
+        stringOctets = inputString.split( delim )      
             
         # There should be exactly "numOctets" octets in the address
         if( len( stringOctets ) != numOctets ):
@@ -58,7 +63,12 @@ class NetAddress(object):
             return self._octet[octet - 1]
         else:
             # Index out of bounds condition, return -1 to signal error
+            # FUTURE: Could raise an error alternatively
             return -1
+    
+    # Returns the address length (aka prefix length) of the given address        
+    def getAddrLen(self):
+        return self._addrLen     
 
     # Return true if the "bitIndex" bit of the "byteIndex" byte is set 
     # The parameters must be canonical (bits 0-7, bytes 0-5)   

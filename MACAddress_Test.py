@@ -25,9 +25,64 @@ class MACAddress_Test( NetAddress_Test ):
     #  of MAC addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( 
-        MACAddress("0B:22:33:44:55:66"))   
+        MACAddress( "01:22:33:44:55:66" ) )   
         self.getNetAddressList().append( 
-        MACAddress("0D:22:33:44:55:FF"))
+        MACAddress( "03:22:33:44:55:FF" ) )
+        self.getNetAddressList().append( 
+        MACAddress( "00:22:33:44:55:66" ) )   
+        self.getNetAddressList().append( 
+        MACAddress( "FF:FF:FF:FF:FF:FF" ) )
+        
+    # Performs a general constructor test to ensure it can tolerate invalid
+    #  inputs by raising the proper errors. This is not specific to a method
+    #  offered by the class but is required to be implemented by the base class 
+    def test_invalidInstances(self):
+        
+        # Build tuples of invalid input strings and address lengths
+        bogusInputStrings = ( None, "", "clown", 
+        "01:22:33:44:55",
+        "01:22:33:44:55:",
+        "01:22:33:44:55:66:77",
+        "01:22:33:44:55:-1",
+        "01:22:33:44:55:gg" )
+        
+        bogusAddrLens = ( -1, 49 )
+        
+        # Iterate over the list of invalid input strings
+        for bogusInputString in bogusInputStrings:
+            try:
+                # Attempt to build the object
+                MACAddress( bogusInputString )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ( AttributeError, ValueError ) as e:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
+        
+        # Iterate over the list of invalid address lengths      
+        for bogusAddrLen in bogusAddrLens:
+            try:
+                # Attempt to build the object
+                MACAddress( "11:22:#3:44:55:66", bogusAddrLen )
+                
+                # If the loop completes successfully, an error was not raised
+                #  which is indicative of a test failure
+                isErrorRaised = False
+                
+            except ValueError:
+                # Error was raised; this is expected
+                isErrorRaised = True
+                
+            finally:
+                # Ensure the error was raised
+                self.assertTrue ( isErrorRaised )
     
     # Tests the isUnicast() function within the MACAddress class.
     #  The method under test returns true if the MAC address is unicast.
