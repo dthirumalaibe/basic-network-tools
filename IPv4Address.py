@@ -56,6 +56,55 @@ class IPv4Address(NetAddress):
         #  This typically will be returned to the parent's constructor
         return integerOctets
     
+    # Returns the host length of a given address. In this case, it
+    #  is 32 minus the prefix length, which identifies how many
+    #  bits are used for the host address    
+    def getHostLen(self):
+        return 32 - self.getAddrLen()
+    
+    # Returns the beginning of the network range (the "network")
+    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)    
+    def getNetwork(self):
+        
+        # Create a copy of the original object for modification
+        prefix = self
+        
+        # Determine the number of octets to totally clear; this simplifies
+        #  operations since we don't have to iterate over bits if the
+        #  entire byte needs to be zero
+        octetsToClear = self.getHostLen() / 8
+        for i in range (octetsToClear, 0, -1):
+            #prefix._octet[4-i] = 0
+            prefix._setOctet(5-i,0)
+        
+        # If all 4 octets were cleared completely, the addrLen was 0
+        #  so there is nothing more to do. Return now to avoid errors
+        if( octetsToClear > 3 ):
+            return prefix
+        
+        # Identify the current octet where further bitwise clearing
+        #  may need to be done    
+        currentOctet = 4 - octetsToClear
+        
+        # Find the remainder of bits not cleanly divisible by 8 where
+        #  manual iteration over the bits is necessary in a given byte
+        remainingBitsToClear = self.getHostLen() % 8
+        
+        # Raise 2^bits and end up with a number 1<=x<=128
+        #  Subtracting 1 reveals the bits that need to be cleared.
+        #  Currently the mask is the opposite of what we need it to be, so
+        #  use XOR to flip the bits by XOR'ing with all ones (11111111)
+        mask = ( pow( 2, remainingBitsToClear ) - 1 ) ^ 0xFF
+        
+        # At this point, the mask should be something like 11110000 where
+        #  the ones are contiguous on the left and zeroes are contiguous
+        #  on the right. Perform bitwise AND to clean low-order bits
+        #prefix._octet[ currentOctet - 1 ] = self.getOctet( currentOctet ) & mask
+        prefix._setOctet( currentOctet, self.getOctet( currentOctet ) & mask )
+        
+        # Return the network prefix; note that "self" was never modified
+        return prefix
+    
     # Return the IPv4 address in dotted-decimal format (xx.xx.xx.xx)
     def toString(self): 
         

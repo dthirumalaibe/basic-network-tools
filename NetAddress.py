@@ -63,12 +63,30 @@ class NetAddress(object):
             return self._octet[octet - 1]
         else:
             # Index out of bounds condition, return -1 to signal error
-            # FUTURE: Could raise an error alternatively
+            # TODO: Could raise an error alternatively
             return -1
+            
+    def _setOctet(self, octet, value):
+        
+        # Test validity of the octet index and the value.
+        #  If either is invalid, make no change.
+        if ( ( octet >= 1 and octet <= len( self._octet ) ) 
+        and ( value >= 0 and value <= 255 ) ):
+            self._octet[octet - 1] = value
     
     # Returns the address length (aka prefix length) of the given address        
     def getAddrLen(self):
-        return self._addrLen     
+        return self._addrLen
+        
+    # Returns the host length of a given address
+    #@abc.abstractmethod
+    #def getHostLen(self):
+     #   return
+    
+    # Returns the network address of the prefix    
+    #@abc.abstractmethod
+    #def getNetwork(self):
+     #   return
 
     # Return true if the "bitIndex" bit of the "byteIndex" byte is set 
     # The parameters must be canonical (bits 0-7, bytes 0-5)   

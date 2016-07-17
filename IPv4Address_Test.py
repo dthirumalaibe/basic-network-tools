@@ -25,11 +25,14 @@ class IPv4Address_Test( NetAddress_Test ):
     #  of IPv4 addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( IPv4Address( "1.2.3.4", 32 ) )
-        self.getNetAddressList().append( IPv4Address( "223.20.30.40", 0) )
-        self.getNetAddressList().append( IPv4Address( "224.17.24.17", 10 ) )
-        self.getNetAddressList().append( IPv4Address( "239.7.5.16" ) )
-        self.getNetAddressList().append( IPv4Address( "240.239.238.237", 1 ) )
-        self.getNetAddressList().append( IPv4Address( "255.54.55.56", 31 ) )
+        self.getNetAddressList().append( IPv4Address( "223.20.30.40", 24) )
+        self.getNetAddressList().append( IPv4Address( "224.17.24.17", 16 ) )
+        self.getNetAddressList().append( IPv4Address( "239.7.5.16", 8 ) )
+        self.getNetAddressList().append( IPv4Address( "255.239.238.237", 0 ) )
+        self.getNetAddressList().append( IPv4Address( "20.54.55.68", 22 ) )
+        self.getNetAddressList().append( IPv4Address( "20.54.55.68", 28 ) )
+        self.getNetAddressList().append( IPv4Address( "20.54.55.68", 11 ) )
+        self.getNetAddressList().append( IPv4Address( "20.54.55.68", 4 ) )
     
     # Performs a general constructor test to ensure it can tolerate invalid
     #  inputs by raising the proper errors. This is not specific to a method
@@ -77,7 +80,18 @@ class IPv4Address_Test( NetAddress_Test ):
             finally:
                 # Ensure the error was raised
                 self.assertTrue ( isErrorRaised )
-    
+                
+    # Tests the getNetwork() function within the IPv4Address class.
+    #  The method under test returns the beginning of the network range
+    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)
+    def test_getNetwork(self):
+        for ip in self.getNetAddressList():
+            
+            # TODO: This is a weak test, just creates the prefixes and
+            #  does nothing else. Make it better in the future
+            prefix = ip.getNetwork()
+            #print prefix
+            
     # Tests the isUnicast() function within the IPv4Address class.
     #  The method under test returns true if the IPv4 address is unicast.
     def test_isUnicast(self):
