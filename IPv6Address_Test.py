@@ -25,17 +25,17 @@ class IPv6Address_Test( NetAddress_Test ):
     #  of IPv6 addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( 
-        IPv6Address("2001:0db8:0000:0000:0000:0000:0000:0001") )
+        IPv6Address("2001:0db8:0000:0000:0004:0003:0002:0001", 64 ) )
         self.getNetAddressList().append( 
-        IPv6Address("FF00:0000:0000:0000:0000:0000:0000:0001", 128) )
+        IPv6Address("FF00:0000:0000:0000:0000:0000:0000:0001") )
         self.getNetAddressList().append( 
-        IPv6Address("FF00:0000:0000:0000:0000:000a:000b:000c", 0) )
+        IPv6Address("FF00:0000:0000:0000:0000:000a:000b:000c", 0 ) )
         self.getNetAddressList().append( 
-        IPv6Address("2002:beef:cafe:0000:0000:0000:0000:0001") )
+        IPv6Address("2002:beef:cafe:0000:0000:0000:0000:0001", 40 ) )
         self.getNetAddressList().append( 
-        IPv6Address("FD00:0000:0000:0000:0000:0000:0000:0001") )
+        IPv6Address("FD00:0000:0000:0000:0000:0000:0000:0001", 80 ) )
         self.getNetAddressList().append( 
-        IPv6Address("FEAA:0000:0000:0000:0000:000a:000b:000c") )
+        IPv6Address("FEAA:0000:0000:0000:0000:000a:000b:000c", 96 ) )
         
     # Performs a general constructor test to ensure it can tolerate invalid
     #  inputs by raising the proper errors. This is not specific to a method

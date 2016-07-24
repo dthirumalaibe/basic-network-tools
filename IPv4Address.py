@@ -63,7 +63,8 @@ class IPv4Address(NetAddress):
         return 32 - self.getAddrLen()
     
     # Returns the beginning of the network range (the "network")
-    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)    
+    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28) 
+    '''   
     def getNetwork(self):
         
         # Create a copy of the original object for modification
@@ -74,7 +75,6 @@ class IPv4Address(NetAddress):
         #  entire byte needs to be zero
         octetsToClear = self.getHostLen() / 8
         for i in range (octetsToClear, 0, -1):
-            #prefix._octet[4-i] = 0
             prefix._setOctet(5-i,0)
         
         # If all 4 octets were cleared completely, the addrLen was 0
@@ -104,7 +104,7 @@ class IPv4Address(NetAddress):
         
         # Return the network prefix; note that "self" was never modified
         return prefix
-    
+    '''
     # Return the IPv4 address in dotted-decimal format (xx.xx.xx.xx)
     def toString(self): 
         

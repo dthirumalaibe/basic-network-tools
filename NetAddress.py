@@ -78,15 +78,57 @@ class NetAddress(object):
     def getAddrLen(self):
         return self._addrLen
         
+    # Returns the last host address in the subnet, effectively the same
+    #  as getNetwork() except with all 1s in the host address TODO
+    def getEndOfSubnet(self):
+        raise NotImplementedError()
+        
+    # Returns the beginning of the network range (the "network")
+    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)    
+    def getNetwork(self):
+        
+        # Create a copy of the original object for modification
+        prefix = self
+        
+        # Determine the number of octets to totally clear; this simplifies
+        #  operations since we don't have to iterate over bits if the
+        #  entire byte needs to be zero
+        octetsToClear = self.getHostLen() / 8
+        for i in range (octetsToClear, 0, -1):
+            prefix._setOctet( ( len( self ) + 1 ) - i, 0)
+        
+        # If all octets were cleared completely, the addrLen was 0
+        #  so there is nothing more to do. Return now to avoid errors
+        if( octetsToClear >  len( self ) - 1 ):
+            return prefix
+        
+        # Identify the current octet where further bitwise clearing
+        #  may need to be done    
+        currentOctet = len( self ) - octetsToClear
+        
+        # Find the remainder of bits not cleanly divisible by 8 where
+        #  manual iteration over the bits is necessary in a given byte
+        remainingBitsToClear = self.getHostLen() % 8
+        
+        # Raise 2^bits and end up with a number 1<=x<=2^(maxPrefLen)
+        #  Subtracting 1 reveals the bits that need to be cleared.
+        #  Currently the mask is the opposite of what we need it to be, so
+        #  use XOR to flip the bits by XOR'ing with all ones (11111111)
+        mask = ( pow( 2, remainingBitsToClear ) - 1 ) ^ 0xFF
+        
+        # At this point, the mask should be something like 11110000 where
+        #  the ones are contiguous on the left and zeroes are contiguous
+        #  on the right. Perform bitwise AND to clean low-order bits
+        #prefix._octet[ currentOctet - 1 ] = self.getOctet( currentOctet ) & mask
+        prefix._setOctet( currentOctet, self.getOctet( currentOctet ) & mask )
+        
+        # Return the network prefix; note that "self" was never modified
+        return prefix
+        
     # Returns the host length of a given address
-    #@abc.abstractmethod
-    #def getHostLen(self):
-     #   return
-    
-    # Returns the network address of the prefix    
-    #@abc.abstractmethod
-    #def getNetwork(self):
-     #   return
+    @abc.abstractmethod
+    def getHostLen(self):
+        return
 
     # Return true if the "bitIndex" bit of the "byteIndex" byte is set 
     # The parameters must be canonical (bits 0-7, bytes 0-5)   

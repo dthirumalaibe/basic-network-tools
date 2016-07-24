@@ -80,17 +80,6 @@ class IPv4Address_Test( NetAddress_Test ):
             finally:
                 # Ensure the error was raised
                 self.assertTrue ( isErrorRaised )
-                
-    # Tests the getNetwork() function within the IPv4Address class.
-    #  The method under test returns the beginning of the network range
-    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)
-    def test_getNetwork(self):
-        for ip in self.getNetAddressList():
-            
-            # TODO: This is a weak test, just creates the prefixes and
-            #  does nothing else. Make it better in the future
-            prefix = ip.getNetwork()
-            #print prefix
             
     # Tests the isUnicast() function within the IPv4Address class.
     #  The method under test returns true if the IPv4 address is unicast.

@@ -25,11 +25,11 @@ class MACAddress_Test( NetAddress_Test ):
     #  of MAC addresses for testing.
     def populateNetAddressList(self):
         self.getNetAddressList().append( 
-        MACAddress( "01:22:33:44:55:66" ) )   
+        MACAddress( "01:22:33:44:55:66", 0 ) )   
         self.getNetAddressList().append( 
-        MACAddress( "03:22:33:44:55:FF" ) )
+        MACAddress( "03:22:33:44:55:FF", 24 ) )
         self.getNetAddressList().append( 
-        MACAddress( "00:22:33:44:55:66" ) )   
+        MACAddress( "00:22:33:44:55:66", 28 ) )   
         self.getNetAddressList().append( 
         MACAddress( "FF:FF:FF:FF:FF:FF" ) )
         

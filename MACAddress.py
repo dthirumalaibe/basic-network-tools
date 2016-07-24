@@ -58,6 +58,12 @@ class MACAddress(NetAddress):
         # Return the list of integer octets after parsing.
         #  This typically will be returned to the parent's constructor
         return integerOctets
+        
+    # Returns the host length of a given address. In this case, it
+    #  is 48 minus the prefix length, which identifies how many
+    #  bits are used for the host address    
+    def getHostLen(self):
+        return 48 - self.getAddrLen()
 
     # Return the MAC address in EUI format (xx:xx:xx:xx:xx:xx)
     def toString(self): 

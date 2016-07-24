@@ -58,6 +58,17 @@ class NetAddress_Test(unittest.TestCase):
     @staticmethod
     def buildTestSuite( childClassName ):
         return unittest.TestLoader().loadTestsFromTestCase( childClassName )
+        
+    # Tests the getNetwork() function within the IPv4Address class.
+    #  The method under test returns the beginning of the network range
+    #  based on the address length (e.g. 10.4.6.68/28 -> 10.4.6.64/28)
+    def test_getNetwork(self):
+        for ip in self.getNetAddressList():
+            
+            # TODO: This is a weak test, just creates the prefixes and
+            #  does nothing else. Make it better in the future
+            prefix = ip.getNetwork()
+            print prefix
     
     # Tests the getOctet() function within the IPv4Address class.
     #  This test is common for all network addresses.
